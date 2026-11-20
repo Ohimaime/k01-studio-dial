@@ -1,0 +1,116 @@
+@import "tailwindcss";
+
+/* Clear Tailwind's default font stacks so they never shadow the next/font variables. */
+@theme {
+  --font-sans: initial;
+  --font-serif: initial;
+  --font-mono: initial;
+}
+
+:root {
+  --bg-mat: #0b1114;
+  --grid-minor: rgba(242, 244, 243, 0.04);
+  --grid-major: rgba(242, 244, 243, 0.1);
+  --ink-primary: #f2f4f3;
+  --ink-muted: #7a8b94;
+  --accent-cta: #ff4d00;
+}
+
+@theme inline {
+  --color-mat: var(--bg-mat);
+  --color-grid-minor: var(--grid-minor);
+  --color-grid-major: var(--grid-major);
+  --color-ink: var(--ink-primary);
+  --color-ink-muted: var(--ink-muted);
+  --color-cta: var(--accent-cta);
+}
+
+@utility font-display {
+  font-family: var(--font-display), ui-sans-serif, sans-serif;
+}
+
+@utility font-mono {
+  font-family: var(--font-mono), ui-monospace, monospace;
+}
+
+/* 24px minor / 120px major drafting grid. Pure CSS gradients: no images. */
+@utility blueprint-mat {
+  background-color: var(--bg-mat);
+  background-image:
+    linear-gradient(to right, var(--grid-major) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-major) 1px, transparent 1px),
+    linear-gradient(to right, var(--grid-minor) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-minor) 1px, transparent 1px);
+  background-size:
+    120px 120px,
+    120px 120px,
+    24px 24px,
+    24px 24px;
+  background-position: -1px -1px;
+}
+
+html {
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
+  background-color: var(--bg-mat);
+}
+
+body {
+  background-color: var(--bg-mat);
+  color: var(--ink-primary);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background-color: var(--ink-primary);
+  color: var(--bg-mat);
+}
+
+/* Lock page scroll while a modal dialog is open. */
+html:has(dialog[open]) {
+  overflow: hidden;
+}
+
+/* Reservation dialog: solid scrim, no blur. Bottom sheet on mobile, centred panel from sm. */
+.reserve-dialog::backdrop {
+  background-color: rgba(8, 12, 14, 0.82);
+}
+
+.reserve-dialog[open] {
+  animation: reserve-in 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reserve-dialog[open]::backdrop {
+  animation: reserve-fade 240ms ease-out;
+}
+
+@keyframes reserve-in {
+  from {
+    transform: translate3d(0, 24px, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes reserve-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+  .reserve-dialog[open],
+  .reserve-dialog[open]::backdrop {
+    animation: none;
+  }
+}
